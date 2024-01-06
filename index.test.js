@@ -23,7 +23,7 @@ describe("/users", () => {
 
     const request = await fetch(`${BASE_URL}/users`, {
       method: "POST",
-      body: data,
+      body: JSON.stringify(data),
     });
 
     const result = await request.json();
@@ -49,7 +49,7 @@ describe("/users", () => {
 
     const request = await fetch(`${BASE_URL}/users`, {
       method: "DELETE",
-      body: data,
+      body: JSON.stringify(data),
     });
 
     const users = await (await fetch(`${BASE_URL}/users`)).json();

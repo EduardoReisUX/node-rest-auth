@@ -1,0 +1,15 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "test": "node --test",
+    "test:dev": "node --test --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

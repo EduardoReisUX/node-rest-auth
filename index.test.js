@@ -1,6 +1,8 @@
 import assert from "node:assert";
 import { describe, it, before, after } from "node:test";
 
+/** @typedef {{ id: string, username: string, password: string }} UserData */
+
 const BASE_URL = "http://localhost:3000";
 
 describe("/users", () => {
@@ -26,10 +28,16 @@ describe("/users", () => {
       body: JSON.stringify(data),
     });
 
+    /** @type {UserData} */
     const result = await request.json();
 
+    const [salt, hash] = result.password.split(":");
+
     assert.strictEqual(request.status, 201);
-    assert.deepStrictEqual(result, data);
+    assert.notDeepStrictEqual(result, data);
+    assert.ok(salt);
+    assert.ok(hash);
+    assert.notStrictEqual(result.password, data.password);
   });
 
   it("should return a list of users", async () => {
@@ -37,9 +45,10 @@ describe("/users", () => {
     const result = await request.json();
 
     assert.strictEqual(request.status, 200);
-    assert.deepStrictEqual(result, [
+    assert.notDeepStrictEqual(result, [
       { id: "123", username: "Eduardo", password: "123456" },
     ]);
+    assert.notDeepEqual(result[0].password, "123456");
   });
 
   it("should delete a user given valid id", async () => {

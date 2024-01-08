@@ -40,6 +40,64 @@ describe("/users", () => {
     assert.notStrictEqual(result.password, data.password);
   });
 
+  it("should not create a user given username or password are empty", async () => {
+    const data = {
+      id: "123",
+      username: "",
+      password: "123456",
+    };
+
+    const request = await fetch(`${BASE_URL}/users`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    const result = await request.json();
+
+    assert.strictEqual(request.status, 400);
+    assert.deepStrictEqual(result, {
+      error: "invalid username or password!",
+    });
+
+    const data2 = {
+      id: "123",
+      username: "Eduardo",
+      password: "",
+    };
+
+    const request2 = await fetch(`${BASE_URL}/users`, {
+      method: "POST",
+      body: JSON.stringify(data2),
+    });
+
+    const result2 = await request2.json();
+
+    assert.strictEqual(request2.status, 400);
+    assert.deepStrictEqual(result2, {
+      error: "invalid username or password!",
+    });
+  });
+
+  it("should not create a user that already exists", async () => {
+    const data = {
+      id: "123",
+      username: "Eduardo",
+      password: "123456",
+    };
+
+    const request = await fetch(`${BASE_URL}/users`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    const result = await request.json();
+
+    assert.strictEqual(request.status, 400);
+    assert.deepStrictEqual(result, {
+      error: "user already exists!",
+    });
+  });
+
   it("should return a list of users", async () => {
     const request = await fetch(`${BASE_URL}/users`);
     const result = await request.json();

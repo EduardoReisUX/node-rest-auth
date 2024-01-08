@@ -51,6 +51,23 @@ describe("/users", () => {
     assert.notDeepEqual(result[0].password, "123456");
   });
 
+  it("should login given valid username and password", async () => {
+    const data = {
+      username: "Eduardo",
+      password: "123456",
+    };
+
+    const request = await fetch(`${BASE_URL}/users/login`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    const result = await request.json();
+
+    assert.strictEqual(request.status, 200);
+    assert.deepStrictEqual(result, { message: "Welcome, Eduardo!" });
+  });
+
   it("should delete a user given valid id", async () => {
     const data = {
       id: "123",

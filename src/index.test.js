@@ -7,14 +7,14 @@ const BASE_URL = "http://localhost:3000";
 
 describe("/users", () => {
   /** @type {import("node:http").Server} */
-  let _server = {};
+  let _server;
 
   before(async () => {
     _server = (await import("./index.js")).app;
     await new Promise((resolve) => _server.once("listening", resolve));
   });
 
-  after((done) => _server.close(done));
+  after((done) => _server.close());
 
   it("should create a user given valid data", async () => {
     const data = {

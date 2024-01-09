@@ -16,7 +16,7 @@ function getUsers(request, response) {
 /**
  *
  * @param {string} password
- * @returns {Promise<`${string}:${string}`>}
+ * @returns {Promise<string>}
  */
 async function hashPassword(password) {
   return new Promise((resolve, reject) => {
@@ -24,6 +24,8 @@ async function hashPassword(password) {
 
     crypto.scrypt(password, salt, 64, (err, derivedKey) => {
       if (err) reject(err);
+
+      const key = derivedKey.toString("hex");
 
       resolve(salt + ":" + derivedKey.toString("hex"));
     });
@@ -50,43 +52,47 @@ async function verifyPassword(password, hashedPassword) {
 
 /** @type {import("node:http").RequestListener} */
 async function loginUser(request, response) {
-  const { username, password } = JSON.parse(await once(request, "data"));
+  const { username, password } = JSON.parse(`${await once(request, "data")}`);
   const user = users.find((user) => user.username === username);
 
   if (!user) {
     response.writeHead(404);
-    return response.end(JSON.stringify({ error: "user not found!" }));
+    response.end(JSON.stringify({ error: "user not found!" }));
+    return;
   }
 
   const passwordOk = await verifyPassword(password, user.password);
 
   if (!passwordOk) {
     response.writeHead(400);
-    return response.end(
+    response.end(
       JSON.stringify({ error: "username or password are invalid!" })
     );
+    return;
   }
 
-  return response.end(JSON.stringify({ message: `Welcome, ${username}!` }));
+  response.end(JSON.stringify({ message: `Welcome, ${username}!` }));
 }
 
 /** @type {import("node:http").RequestListener} */
 async function createUser(request, response) {
   /** @type {{id: string, username: string, password: string}} */
-  const { id, username, password } = JSON.parse(await once(request, "data"));
+  const { id, username, password } = JSON.parse(
+    `${await once(request, "data")}`
+  );
 
   if (!username.trim() || !password.trim()) {
     response.writeHead(400);
-    return response.end(
-      JSON.stringify({ error: "invalid username or password!" })
-    );
+    response.end(JSON.stringify({ error: "invalid username or password!" }));
+    return;
   }
 
   const userAlreadyExists = !!users.find((user) => user.username === username);
 
   if (userAlreadyExists) {
     response.writeHead(400);
-    return response.end(JSON.stringify({ error: "user already exists!" }));
+    response.end(JSON.stringify({ error: "user already exists!" }));
+    return;
   }
 
   const user = {
@@ -103,7 +109,7 @@ async function createUser(request, response) {
 
 /** @type {import("node:http").RequestListener} */
 async function deleteUser(request, response) {
-  const { id } = JSON.parse(await once(request, "data"));
+  const { id } = JSON.parse(`${await once(request, "data")}`);
   const userIndex = users.findIndex((user) => user.id === id);
 
   users.splice(userIndex, 1);

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "System",
+    "noImplicitAny": false,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "checkJs": true,
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "strict": true
+  },
+
+  "include": ["./src/**/*"],
+  "exclude": ["./node_modules", "dist"]
+}

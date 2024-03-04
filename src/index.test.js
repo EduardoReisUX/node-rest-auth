@@ -1,7 +1,8 @@
+//@ts-check
 import assert from "node:assert";
 import { describe, it, before, after } from "node:test";
 
-/** @typedef {{ id: string, username: string, password: string }} UserData */
+/** @typedef {import("./users/entities/Users").User} UserData */
 
 const BASE_URL = "http://localhost:3000";
 
@@ -14,7 +15,7 @@ describe("/users", () => {
     await new Promise((resolve) => _server.once("listening", resolve));
   });
 
-  after((done) => _server.close());
+  after(() => _server.close());
 
   it("should create a user given valid data", async () => {
     const data = {
@@ -126,7 +127,50 @@ describe("/users", () => {
     assert.deepStrictEqual(result, { message: "Welcome, Eduardo!" });
   });
 
-  it("should delete a user given valid id", async () => {
+  // todo
+  it.todo(
+    "should give a JWT access and refresh token to a authenticated user",
+    () => {}
+  );
+
+  it("should delete a user given valid id if user is authenticated", async () => {
+    const data = {
+      id: "123",
+    };
+
+    const request = await fetch(`${BASE_URL}/users`, {
+      method: "DELETE",
+      body: JSON.stringify(data),
+    });
+
+    const users = await (await fetch(`${BASE_URL}/users`)).json();
+
+    assert.strictEqual(request.status, 204);
+    assert.deepStrictEqual(users, []);
+  });
+
+  // todo
+  it.todo(
+    "should not delete a user if authenticated user is deleting itself",
+    async () => {
+      const data = {
+        id: "1234",
+      };
+
+      const request = await fetch(`${BASE_URL}/users`, {
+        method: "DELETE",
+        body: JSON.stringify(data),
+      });
+
+      const users = await (await fetch(`${BASE_URL}/users`)).json();
+
+      assert.strictEqual(request.status, 204);
+      assert.deepStrictEqual(users, []);
+    }
+  );
+
+  // todo
+  it.todo("should not delete a user given invalid id", async () => {
     const data = {
       id: "123",
     };

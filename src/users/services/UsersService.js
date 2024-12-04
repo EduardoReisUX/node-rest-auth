@@ -48,6 +48,10 @@ export class UsersService {
       return { error: "invalid username or password!" };
     }
 
+    if (password.trim().length < 6) {
+      return { error: "Password should have at least 6 characters!" };
+    }
+
     const userAlreadyExists = await this.usersRepository.findByUsername(
       username
     );

@@ -41,6 +41,26 @@ describe("/users", () => {
     assert.notStrictEqual(result.password, data.password);
   });
 
+  it("should not create a user given password have less than 6 characters", async () => {
+    const data = {
+      id: "123",
+      username: "ItWillFail",
+      password: "12345",
+    };
+
+    const request = await fetch(`${BASE_URL}/users`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    const result = await request.json();
+
+    assert.strictEqual(request.status, 400);
+    assert.deepStrictEqual(result, {
+      error: "Password should have at least 6 characters!",
+    });
+  });
+
   it("should not create a user given username or password are empty", async () => {
     const data = {
       id: "123",
